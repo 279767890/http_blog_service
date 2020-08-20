@@ -9,10 +9,10 @@ using namespace std;
 namespace {
   const string blog_db = "blog_system";
   const string blog_table = "blog_table";
-  const string blog_server = "";
-  const string blog_user = "";
-  const string blog_pass = "";
-  const int blog_port = ;
+  const string blog_server = "cdb-ad5lpz7y.cd.tencentcdb.com";
+  const string blog_user = "root";
+  const string blog_pass = "cjl1234@";
+  const int blog_port = 10163;
 }
 
 
@@ -46,12 +46,7 @@ int main() {
 
   svr.Post("/blog", [&](const Request& req, Response& res) {
     Document d;
-    cout << req.method << endl;
-    cout << req.path << endl;
-    cout << req.remote_addr << endl;
-    cout << req.body << endl;
     if (d.Parse(req.body.c_str()).HasParseError()) {
-      cout << "parse" << endl;
       return 1;
     }
 
@@ -62,12 +57,10 @@ int main() {
     unique_ptr<char> sql(new char[strlen(content) * 2 + 4096]);
     sprintf(sql.get(), "insert into blog_table values(null, '%s', '%s', '%d', '%s')",
             title, content, tag_id, create_time);
-    cout << sql.get() << endl;
     mysqlpp::Query query = conn.query(string(sql.get()));
     try {
       query.execute();
     } catch(const mysqlpp::BadQuery& er) {
-      cout << "query error :" << er.what() << endl;
       return -1;
     }
   });
